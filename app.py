@@ -3,18 +3,74 @@ import os
 import re
 
 # إعدادات الصفحة لتكون متوافقة مع الهواتف والآيفون شاشات اللمس
-st.set_page_config(page_title="E01-TR11", page_icon="🚀", layout="centered")
+st.set_page_config(page_title="E01-TR11 PROG", page_icon="🚀", layout="centered")
 
-# تطبيق ثيم مظلم احترافي ومتناسق عبر الـ CSS لتسهيل القراءة بالعمل
+# تطبيق ثيم أسود احترافي ومتناسق (Pitch Black Theme)
 st.markdown("""
     <style>
-    .main { background-color: #1e1e2e; color: #cdd6f4; }
-    .stTextArea textarea { background-color: #313244 !important; color: #cdd6f4 !important; font-family: 'Consolas', monospace !important; }
-    div.stButton > button:first-child { background-color: #a6e3a1 !important; color: #11111b !important; font-weight: bold !important; width: 100%; border: none !important; padding: 10px !important; }
-    .brand-title { color: #f38ba8; font-family: 'Arial Black', sans-serif; font-size: 26px; font-weight: bold; text-align: center; margin-bottom: 0px; }
-    .brand-sub { color: #89b4fa; font-family: 'Consolas', monospace; font-size: 14px; font-weight: bold; text-align: center; margin-bottom: 25px; }
-    th { background-color: #45475a !important; color: #cdd6f4 !important; text-align: center !important; }
-    td { text-align: center !important; }
+    /* خلفية الصفحة والنصوص الرئيسية */
+    .main { background-color: #0b0f19; color: #e2e8f0; }
+    
+    /* مربع إدخال النصوص */
+    .stTextArea textarea { 
+        background-color: #111827 !important; 
+        color: #f3f4f6 !important; 
+        border: 1px solid #1f2937 !important;
+        font-family: 'Consolas', monospace !important; 
+    }
+    .stTextArea textarea:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.4) !important;
+    }
+
+    /* أزرار التشغيل */
+    div.stButton > button:first-child { 
+        background-color: #2563eb !important; 
+        color: #ffffff !important; 
+        font-weight: bold !important; 
+        width: 100%; 
+        border: none !important; 
+        padding: 12px !important; 
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #1d4ed8 !important;
+        box-shadow: 0 0 12px rgba(37, 99, 235, 0.5) !important;
+    }
+
+    /* العناوين والشعار */
+    .brand-title { 
+        color: #ffffff; 
+        font-family: 'Arial Black', sans-serif; 
+        font-size: 28px; 
+        font-weight: 900; 
+        text-align: center; 
+        letter-spacing: 2px;
+        margin-bottom: 0px; 
+    }
+    .brand-sub { 
+        color: #94a3b8; 
+        font-family: 'Consolas', monospace; 
+        font-size: 13px; 
+        font-weight: bold; 
+        text-align: center; 
+        margin-bottom: 25px; 
+    }
+
+    /* تنسيق الجداول */
+    th { 
+        background-color: #1e293b !important; 
+        color: #38bdf8 !important; 
+        text-align: center !important; 
+        border-bottom: 2px solid #334155 !important;
+    }
+    td { 
+        background-color: #0f172a !important;
+        color: #cbd5e1 !important;
+        text-align: center !important; 
+        border-bottom: 1px solid #1e293b !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -42,7 +98,6 @@ def process_single_line(line_text):
     تحليل كل سطر على حدة بناءً على عدد الأرقام مفصولة بمسافات.
     الأقل من 4 أرقام تجمع لتكون الكمية، و 4 أرقام أو أكثر هي الـ Reference.
     """
-    # استخراج كافة الأعداد (التي قد تحتوي على حرف في نهايتها للمراجع)
     tokens = re.findall(r'\d+[a-zA-Z]?', line_text)
     
     if not tokens:
@@ -52,24 +107,19 @@ def process_single_line(line_text):
     user_input_ref = ""
     
     for token in tokens:
-        # استخراج الأرقام فقط لمعرفة طول العدد
         digits_only = "".join([c for c in token if c.isdigit()])
         
         if len(digits_only) >= 4:
-            # إذا كان 4 أرقام أو أكثر فهو المرجع الرئيسي للسطر
             user_input_ref = token
         else:
-            # إذا كان أقل من 4 أرقام نقوم بجمعه مع كميات هذا السطر
             quantity_sum += int(digits_only)
             
-    # إذا لم يتم العثور على أي مرجع بـ 4 أرقام، نعتبر آخر عنصر بالسطر هو المرجع
     if not user_input_ref and tokens:
         user_input_ref = tokens[-1]
         digits_only = "".join([c for c in user_input_ref if c.isdigit()])
         if len(digits_only) < 4 and quantity_sum >= int(digits_only):
             quantity_sum -= int(digits_only)
             
-    # إذا لم تكن هناك أي كميات مكتوبة في السطر، نعتبر الكمية الافتراضية 1
     if quantity_sum == 0:
         quantity_sum = 1
         
@@ -98,9 +148,7 @@ if st.button("🚀 معالجة البيانات وحساب الحصيلة"):
             if not line_clean:
                 continue
                 
-            # معالجة كل سطر على حدة بشكل منفصل تماماً
             quantity, user_input_ref = process_single_line(line_clean)
-            
             search_digits = clean_ref_for_matching(user_input_ref)
             
             if not search_digits:
@@ -123,7 +171,6 @@ if st.button("🚀 معالجة البيانات وحساب الحصيلة"):
             else:
                 detailed_data.append({"الرقم المختصر": search_digits, "المرجع الكامل": "❌ غير مسجل", "الكمية": quantity, "النوع (Version)": "مجهول"})
 
-        # ترتيب المراجع تصاعدياً من الأصغر للأكبر لسهولة مراجعتها
         try:
             detailed_data.sort(key=lambda x: int(x["الرقم المختصر"]) if x["الرقم المختصر"].isdigit() else 999999)
         except Exception:
