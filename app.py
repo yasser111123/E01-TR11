@@ -126,8 +126,8 @@ def process_single_line(line_text):
     return quantity_sum, user_input_ref
 
 # الشعار الخاص بك في أعلى صفحة الويب
-st.markdown('<div class="brand-title">E01-TR11</div>', unsafe_allow_html=True)
-st.markdown('<div class="brand-sub">Damn</div>', unsafe_allow_html=True)
+st.markdown('<div class="brand-title">PDB-DG TRAN 11</div>', unsafe_allow_html=True)
+st.markdown('<div class="brand-sub">E01</div>', unsafe_allow_html=True)
 
 st.markdown("### 📝 قم بلصق بيانات الكارتية والكميات هنا:")
 input_text = st.text_area("", height=220, placeholder="أمثلة الإدخال المعتمدة الآن:\n21 147 5117\n147 4733\n5117")
